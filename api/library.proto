@@ -1,0 +1,74 @@
+syntax = "proto3";
+package library;
+
+option go_package="library";
+
+// uncomment for inline HTTP desc google.api.http
+import "google/api/annotations.proto";
+
+service Library {
+  // Получить книги по идентификаторам
+  rpc GetBooksByIDs(GetBooksByIDsRequest) returns (GetBooksByIDsResponse) {
+    option (google.api.http) = {
+      post: "/library/get-books-by-ids"
+      body: "*"
+    };
+  }
+
+  // Получить книги по идентификаторам с пользователями
+  rpc GetBooksWithUserByIDs(GetBooksWithUserByIDsRequest) returns (GetBooksWithUserByIDsResponse) {
+    option (google.api.http) = {
+      post: "/library/get-books-with-user-by-ids"
+      body: "*"
+    };
+  }
+
+  // Сохранить книгу
+  rpc SaveBook(SaveBooksRequest) returns (SaveBooksResponse) {
+    option (google.api.http) = {
+      post: "/library/save-book"
+      body: "*"
+    };
+  }
+}
+// GetBooksByIDsRequest
+message GetBooksByIDsRequest {
+  repeated int64 book_ids = 1;
+}
+
+// GetBooksByIDsResponse
+message GetBooksByIDsResponse {
+  repeated Book books = 1;
+}
+
+// GetBooksByIDsRequest
+message GetBooksWithUserByIDsRequest {
+  repeated int64 book_ids = 1;
+}
+
+// GetBooksByIDsResponse
+message GetBooksWithUserByIDsResponse {
+  message BookWithUser {
+    int64 id = 1;
+    string name = 2;
+    string user_name = 3;
+  }
+  repeated BookWithUser books = 1;
+}
+
+// Book
+message Book {
+  int64 id = 1;
+  string name = 2;
+}
+
+// SaveBooksRequest
+message SaveBooksRequest {
+  int64 id = 1;
+  string name = 2;
+}
+
+// SaveBooksResponse
+message SaveBooksResponse {
+  Book book = 1;
+}

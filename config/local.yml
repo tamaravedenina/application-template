@@ -1,0 +1,16 @@
+appName: "application-template"
+httpPort: 8080
+grpcPort: 8084
+database:
+  database: "library"
+  addr: "127.0.0.1:5433"
+  user: "library"
+  password: "library"
+  options:
+    poolSize: 10
+    minIdleConns: 2
+    logQuery: true
+
+apiClients:
+  user:
+    target: "127.0.0.1:8084"

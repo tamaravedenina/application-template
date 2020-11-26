@@ -1,0 +1,11 @@
+version: '2'
+services:
+  db:
+    image: postgres:13
+    environment:
+      - "POSTGRES_USER=library"
+      - "POSTGRES_PASSWORD=library"
+      - "POSTGRES_DB=library"
+    ports:
+      - "5433:5432"
+    command: ["postgres", "-c", "log_statement=all"]

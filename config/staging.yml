@@ -1,0 +1,3 @@
+AppName: "application-template"
+HttpPort: 8080
+GrpcPort: 8084
