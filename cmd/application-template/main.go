@@ -1,23 +1,20 @@
 package main
 
 import (
-	lm "application-template/internal/app/library"
-	um "application-template/internal/app/user"
-	"application-template/internal/pkg/config"
-	"application-template/internal/pkg/db"
 	"fmt"
-	"github.com/go-chi/chi"
-	"github.com/rakyll/statik/fs"
-	"github.com/sirupsen/logrus"
 	"net/http"
 	"os"
 
-	"application-template/internal/pkg/server"
+	"github.com/go-chi/chi"
+	"github.com/rakyll/statik/fs"
+	"github.com/sirupsen/logrus"
 	"github.com/utrack/clay/v2/log"
 	"github.com/utrack/clay/v2/transport/middlewares/mwgrpc"
-	// We're using statik-compiled files of Swagger UI
-	// for the sake of example.
-	_ "github.com/utrack/clay/doc/example/static/statik"
+
+	um "application-template/internal/app/user"
+	"application-template/internal/pkg/config"
+	"application-template/internal/pkg/db"
+	"application-template/internal/pkg/server"
 )
 
 func main() {
@@ -52,8 +49,6 @@ func main() {
 	hmux := chi.NewRouter()
 	hmux.Mount("/", http.FileServer(staticFS))
 
-	// create library module
-	libraryModule := lm.BuildLibraryModule()
 
 	//create user module
 	userModule := um.BuildUserModule()
@@ -72,7 +67,7 @@ func main() {
 	)
 
 	// run server
-	err = srv.Run(libraryModule, userModule)
+	err = srv.Run(userModule)
 	if err != nil {
 		logrus.Fatal(err)
 	}

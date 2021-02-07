@@ -5,9 +5,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/utrack/clay/v2/transport"
-
 	"github.com/pkg/errors"
+	"github.com/utrack/clay/v2/transport"
 )
 
 // Server is a transport server.
@@ -43,7 +42,7 @@ func (s *Server) Run(svc ...transport.Service) error {
 		return errors.Wrap(err, "couldn't create listeners")
 	}
 
-	s.srv = newServerSet(s.listeners, s.opts)
+	s.srv = newServerSet(s.opts)
 
 	for _, desc := range descSlice {
 		// apply gRPC interceptor

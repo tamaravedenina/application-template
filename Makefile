@@ -54,8 +54,6 @@ generate: protoc-build
 		--goclay_out=./vendor.pb/$${dirName} api/$${fileName}; \
 	done
 
-#		--goclay_out=impl=true,impl_path=../../internal/app/library:./vendor.pb api/library.proto
-
 generate-gapi: protoc-build
 	@for f in $(shell find ./internal/pkg/gapi -name "*.proto"); do\
 		protoc --plugin=protoc-gen-goclay=$(GEN_CLAY_BIN) --plugin=protoc-gen-gofast=$(GEN_GOFAST_BIN) \

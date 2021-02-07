@@ -7,5 +7,6 @@ func AppendInt64Uniq(slice []int64, i int64) []int64 {
 			return slice
 		}
 	}
+
 	return append(slice, i)
 }

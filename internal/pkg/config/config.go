@@ -60,7 +60,7 @@ func GetCfg() *AppConfig {
 	return appConfig
 }
 
-// InitConfigFromFile ...
+// InitConfigFromFile explicitly defines the path of the config file and load him
 func InitConfigFromFile(configFile string) (*AppConfig, error) {
 	viper.SetConfigFile(configFile)
 	err := viper.ReadInConfig()
@@ -71,5 +71,6 @@ func InitConfigFromFile(configFile string) (*AppConfig, error) {
 	appCfg := &AppConfig{}
 	err = viper.Unmarshal(appCfg)
 	appConfig = appCfg
+
 	return appConfig, err
 }

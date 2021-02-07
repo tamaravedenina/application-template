@@ -3,22 +3,23 @@ package db
 import (
 	"context"
 	"fmt"
-	"google.golang.org/grpc"
 	"time"
 
-	"application-template/internal/pkg/config"
 	"github.com/go-pg/pg"
+	"google.golang.org/grpc"
+
+	"application-template/internal/pkg/config"
 )
 
 type dbLogger struct{}
 
-// GetDB ...
+// GetDB returns connection
 func GetDB(ctx context.Context) DatabaseInterface {
 	connection := ctx.Value("db").(DatabaseInterface)
 	return connection
 }
 
-// GetDatabaseConnection ...
+// GetDatabaseConnection returns new pg.DB
 func GetDatabaseConnection(cfg config.Database) *pg.DB {
 	db := pg.Connect(&pg.Options{
 		Addr:     cfg.Addr,
@@ -30,10 +31,11 @@ func GetDatabaseConnection(cfg config.Database) *pg.DB {
 	if cfg.Options.LogQuery == true {
 		db.AddQueryHook(dbLogger{})
 	}
+
 	return db
 }
 
-// UnaryDatabaseInterceptor ...
+// UnaryDatabaseInterceptor set db to context of a unary RPC
 func UnaryDatabaseInterceptor(connection DatabaseInterface) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
 		ctx = context.WithValue(ctx, "db", connection)
@@ -41,7 +43,7 @@ func UnaryDatabaseInterceptor(connection DatabaseInterface) grpc.UnaryServerInte
 	}
 }
 
-// BeforeQuery ...
+// BeforeQuery called before queries
 func (d dbLogger) BeforeQuery(qe *pg.QueryEvent) {
 	if qe.Data == nil {
 		qe.Data = make(map[interface{}]interface{})
@@ -49,7 +51,7 @@ func (d dbLogger) BeforeQuery(qe *pg.QueryEvent) {
 	qe.Data["queryStartTime"] = time.Now()
 }
 
-// AfterQuery ...
+// AfterQuery called after queries
 func (d dbLogger) AfterQuery(qe *pg.QueryEvent) {
 	var duration time.Duration
 	if qe.Data != nil {

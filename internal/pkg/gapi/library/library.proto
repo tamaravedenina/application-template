@@ -1,0 +1,31 @@
+syntax = "proto3";
+package library;
+
+option go_package="library";
+
+// uncomment for inline HTTP desc google.api.http
+import "google/api/annotations.proto";
+
+service Library {
+  // Получить книги, выданные пользователю
+  rpc GetBooksByUserID(GetBooksByUserIDRequest) returns (GetBooksByUserIDResponse) {
+    option (google.api.http) = {
+      post: "/book/get-books-by-user-id"
+      body: "*"
+    };
+  }
+}
+
+// GetBooksByUserIDRequest
+message GetBooksByUserIDRequest {
+  repeated int64 user_ids = 1;
+}
+
+// GetBooksByUserIDResponse
+message GetBooksByUserIDResponse {
+  message Book {
+    int64 id = 1;
+    string name = 2;
+  }
+  repeated Book users = 1;
+}

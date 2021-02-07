@@ -10,13 +10,14 @@ type serverSet struct {
 	grpc *grpc.Server
 }
 
-func newServerSet(listeners *listenerSet, opts *serverOpts) *serverSet {
+func newServerSet(opts *serverOpts) *serverSet {
 	http := chi.NewMux()
 	if len(opts.HTTPMiddlewares) > 0 {
 		http.Use(opts.HTTPMiddlewares...)
 	}
 	http.Mount("/", opts.HTTPMux)
-
+	// TODO check
+	http.With(allowCORS)
 	srv := &serverSet{
 		grpc: grpc.NewServer(opts.GRPCOpts...),
 		http: http,

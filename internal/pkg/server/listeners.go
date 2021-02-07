@@ -31,12 +31,13 @@ func newListenerSet(opts *serverOpts) (*listenerSet, error) {
 
 	if opts.RPCPort == opts.HTTPPort {
 		mux := cmux.New(liSet.GRPC)
-		liSet.GRPC = mux.Match(cmux.HTTP2())
+		liSet.GRPC = mux.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
 		liSet.HTTP = mux.Match(cmux.Any())
 		liSet.mainListener = mux
-	} else {
-		liSet.HTTP, err = newListener(opts.HTTPPort)
+		return liSet, nil
 	}
+
+	liSet.HTTP, err = newListener(opts.HTTPPort)
 	if err != nil {
 		return nil, errors.Wrap(err, "couldn't create HTTP listener")
 	}
@@ -50,6 +51,7 @@ func newListener(port int) (net.Listener, error) {
 	var listener net.Listener
 	var err error
 	start := time.Now()
+
 	for time.Since(start) < listenRetryDuration {
 		listener, err = net.Listen("tcp", net.JoinHostPort("", strconv.Itoa(port)))
 		if err == nil {
@@ -57,5 +59,6 @@ func newListener(port int) (net.Listener, error) {
 		}
 		time.Sleep(listenRetryWait)
 	}
+
 	return nil, err
 }

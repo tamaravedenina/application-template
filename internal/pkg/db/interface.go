@@ -7,7 +7,7 @@ import (
 	"github.com/go-pg/pg/orm"
 )
 
-// DatabaseInterface ...
+// DatabaseInterface is a common interface for pg.DB and pg.Tx types
 type DatabaseInterface interface {
 	Model(model ...interface{}) *orm.Query
 	ModelContext(c context.Context, model ...interface{}) *orm.Query
