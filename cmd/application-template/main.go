@@ -18,46 +18,47 @@ import (
 )
 
 func main() {
-	// get env
+	err := mainWithoutFatal()
+	if err != nil {
+		logrus.Fatal(err)
+	}
+}
+
+func mainWithoutFatal() error {
 	env := os.Getenv("ENV")
 	if env == "" {
 		env = "local"
 	}
 
-	// init config
 	appConfig, err := config.InitConfigFromFile(fmt.Sprintf("./config/%s.yml", env))
 	if err != nil {
-		logrus.Fatal(err)
-	} else {
-		// print cfg to log
-		fmt.Printf("appConfig: %+v\n", appConfig)
+		return err
 	}
 
-	// init database
+	fmt.Printf("appConfig: %+v\n", appConfig)
+
 	databaseConnection := db.GetDatabaseConnection(appConfig.Database)
 	defer func() {
-		if err := databaseConnection.Close(); err != nil {
-			logrus.Fatalf("failed to close DB: %v\n", err)
+		if closeErr := databaseConnection.Close(); closeErr != nil {
+			err = closeErr
+			return
 		}
 	}()
 
-	// Wire up our bundled Swagger UI
 	staticFS, err := fs.New()
 	if err != nil {
-		logrus.Fatal(err)
+		return err
 	}
+
 	hmux := chi.NewRouter()
 	hmux.Mount("/", http.FileServer(staticFS))
 
-
-	//create user module
 	userModule := um.BuildUserModule()
 
-	// create server
 	srv := server.NewServer(
 		appConfig.GrpcPort,
 		appConfig.HttpPort,
-		// Pass our mux with Swagger UI
+		// Pass out mux with Swagger UI
 		server.WithHTTPMux(hmux),
 		// Recover from both HTTP and gRPC panics and use our own middleware
 		server.WithGRPCUnaryMiddlewares(
@@ -66,9 +67,7 @@ func main() {
 		),
 	)
 
-	// run server
 	err = srv.Run(userModule)
-	if err != nil {
-		logrus.Fatal(err)
-	}
+
+	return err
 }
