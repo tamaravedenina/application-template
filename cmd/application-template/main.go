@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/rakyll/statik/fs"
 	"github.com/sirupsen/logrus"
+	_ "github.com/utrack/clay/doc/example/static/statik"
 	"github.com/utrack/clay/v2/log"
 	"github.com/utrack/clay/v2/transport/middlewares/mwgrpc"
 
